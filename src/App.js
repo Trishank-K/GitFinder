@@ -28,20 +28,30 @@ export default function App() {
   //     unsubscribe();
   //   };
   // }, []);
+  
   function authenticateUser() {
     auth
       .signInWithPopup(provider)
       .then((userAuth) => {
-        const githubUsername = userAuth.additionalUserInfo.username;
+        let githubUsername = userAuth.additionalUserInfo.username;
+
+        // Clear existing cookies (optional, to avoid duplicate keys)
+        document.cookie.split(";").forEach((c) => {
+            document.cookie = c.split("=")[0].trim() + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        });
+
+        // Store username with a proper key
         document.cookie = githubUsername;
+
+        console.log("Updated Cookie:", document.cookie);
         navigate("/home");
       })
       .catch((error) => {
-        let errorCode = error.code;
-        let errorMessage = error.message;
-        console.log(errorCode + errorMessage);
+        console.log(error.code + error.message);
       });
-  }
+}
+
+
   return (
     <div>
       <Routes>
